@@ -2,4 +2,10 @@ from django.shortcuts import render
 
 
 def index(request):
-    return render(request, 'products/index.html')
+    context = {'title': 'Home'}
+    return render(request, 'products/index.html', context)
+
+
+def products(request):
+    context = {'title': 'Product'}
+    return render(request, 'products/products.html', context)
