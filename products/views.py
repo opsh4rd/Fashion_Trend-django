@@ -67,6 +67,12 @@ def about(request):
     return render(request, 'products/about.html', context)
 
 
+def contacts(request):
+    context = {
+        'title': 'Contact'}
+    return render(request, 'products/contacts.html', context)
+
+
 # def baskets(request):
 #     context = {
 #         'title': 'Shoping Cart',
