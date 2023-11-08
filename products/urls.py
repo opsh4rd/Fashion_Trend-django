@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from products.views import index, products, category_products_view, detail_view, about, detail_view_index, contacts
+from products.views import (index, products, category_products_view, detail_view, about, detail_view_index, contacts)
 
 urlpatterns = [
     path('', index, name='index'),  # Отображение главной страницы
