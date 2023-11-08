@@ -1,24 +1,32 @@
 from django.shortcuts import render, get_object_or_404
 from products.models import Product, ProductCategory
 from django.shortcuts import get_object_or_404
+from baskets.models import Baskets
 
 
-# Отображение главной страницы
 def index(request):
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
+
     context = {
         'title': 'Home',
         'products': Product.objects.all(),
         'categories': ProductCategory.objects.all(),
+        'baskets': baskets,
     }
+
     return render(request, 'products/index.html', context)
 
 
 # Отображение страницы с продуктами
 def products(request, category_id=None):
     context = {
-        'title': 'Product',
+        'title': 'Products',
         'categories': ProductCategory.objects.all(),
         'products': Product.objects.all(),
+        'baskets': Baskets.objects.filter(user=request.user),
     }
     return render(request, 'products/products.html', context)
 
@@ -44,6 +52,7 @@ def detail_view(request, id):
         'title': 'Product Detail',
         'product': product,
         'categories': ProductCategory.objects.all(),
+        'baskets': Baskets.objects.filter(user=request.user),
     }
     return render(request, 'products/product-detail.html', context)
 
@@ -56,6 +65,7 @@ def detail_view_index(request, id):
         'title': 'Product Detail',
         'product': product,
         'categories': ProductCategory.objects.all(),
+        'baskets': Baskets.objects.filter(user=request.user),
     }
     return render(request, 'products/product-detail.html', context)
 
@@ -63,18 +73,19 @@ def detail_view_index(request, id):
 # Отображение информации о компании
 def about(request):
     context = {
-        'title': 'About'}
+        'title': 'About',
+        'baskets': Baskets.objects.filter(user=request.user),
+        'categories': ProductCategory.objects.all(),
+    }
+
     return render(request, 'products/about.html', context)
 
 
+# Отображение контактов
 def contacts(request):
     context = {
-        'title': 'Contact'}
+        'title': 'Contact',
+        'baskets': Baskets.objects.filter(user=request.user),
+        'categories': ProductCategory.objects.all(),
+    }
     return render(request, 'products/contacts.html', context)
-
-
-# def baskets(request):
-#     context = {
-#         'title': 'Shoping Cart',
-#     }
-#     return render(request, 'products/../baskets/templates/baskets/baskets.html', context)
