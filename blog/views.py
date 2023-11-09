@@ -32,8 +32,23 @@ def blog_detail(request, id):
 
 
 def category_blog(request, category_id):
-    get_category = BlogCategories.objects.get(id=category_id)
-    filter_blog = Blog.objects.filter(category=get_category)
+    blog_category = BlogCategories.objects.get(id=category_id)
+    blog_filter = Blog.objects.filter(category=blog_category)
     categories_all = BlogCategories.objects.all()
-    context = {'get_category': get_category, 'filter_blog': filter_blog, 'categories_all': categories_all}
-    return render(request, 'blog/blog.html', context)
+    context = {'blog_filter': blog_filter, 'categories_all': categories_all, 'blog_category': blog_category}
+    return render(request, 'blog/blog_categories.html', context)
+
+
+# Поиск блогов
+def search_blogs(request):
+    query = request.GET.get('q')
+    object_list = Blog.objects.filter(name__icontains=query)
+    context = {
+        'query': query,
+        'object_list': object_list,
+        'BlogCategories': BlogCategories.objects.all(),
+    }
+    if len(object_list) == 0:
+        context['no_results'] = True
+
+    return render(request, 'blog/blog_search.html', context)

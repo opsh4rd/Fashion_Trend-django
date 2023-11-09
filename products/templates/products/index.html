@@ -172,7 +172,7 @@
                                class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="*">
                                 {{ category.name }}
                             </a>
-                            {% else %}
+                        {% else %}
                             <a href="{% url 'category_products' category.id %}"
                                class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="*">
                                 {{ category.name }}
@@ -194,13 +194,14 @@
                 </div>
                 <!-- Search product -->
                 <div class="dis-none panel-search w-full p-t-10 p-b-15">
-                    <div class="bor8 dis-flex p-l-15">
+
+                    <form class="bor8 dis-flex p-l-15" action="{% url 'search_results' %}" method="get">
                         <button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
                             <i class="zmdi zmdi-search"></i>
                         </button>
-                        <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product"
-                               placeholder="Search">
-                    </div>
+                        <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="q"
+                               placeholder="Search...">
+                    </form>
                 </div>
                 <!-- Filter -->
                 {#                <div class="dis-none panel-filter w-full p-t-10">#}
@@ -385,15 +386,6 @@
                                     <span class="stext-105 cl3">
                            ${{ product.price }}
                            </span>
-                                </div>
-                                <div class="block2-txt-child2 flex-r p-t-3">
-                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                        <img class="icon-heart1 dis-block trans-04"
-                                             src="{% static 'images/icons/icon-heart-01.png' %}"
-                                             alt="ICON">
-                                        <img class="icon-heart2 dis-block trans-04 ab-t-l"
-                                             src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-                                    </a>
                                 </div>
                             </div>
                         </div>

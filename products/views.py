@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from products.models import Product, ProductCategory
 from django.shortcuts import get_object_or_404
 from baskets.models import Baskets
@@ -27,6 +27,7 @@ def products(request, category_id=None):
         'categories': ProductCategory.objects.all(),
         'products': Product.objects.all(),
         'baskets': Baskets.objects.filter(user=request.user),
+
     }
     return render(request, 'products/products.html', context)
 
@@ -89,3 +90,19 @@ def contacts(request):
         'categories': ProductCategory.objects.all(),
     }
     return render(request, 'products/contacts.html', context)
+
+
+# Поиск товаров
+def search_results(request):
+    query = request.GET.get('q')
+    object_list = Product.objects.filter(name__icontains=query)
+    context = {
+        'query': query,
+        'object_list': object_list,
+    }
+    if len(object_list) == 0:
+        context['no_results'] = True
+
+    return render(request, 'products/search.html', context)
+
+
