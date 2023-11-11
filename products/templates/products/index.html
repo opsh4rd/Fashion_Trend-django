@@ -212,18 +212,8 @@
                             </div>
                             <ul>
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'products' %}" class="filter-link stext-106 trans-04">
                                         Default
-                                    </a>
-                                </li>
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        Popularity
-                                    </a>
-                                </li>
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
-                                        Average rating
                                     </a>
                                 </li>
                                 <li class="p-b-6">
@@ -232,12 +222,12 @@
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'sort_by_low_to_high' %}" class="filter-link stext-106 trans-04">
                                         Price: Low to High
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'sort_by_high_to_low' %}" class="filter-link stext-106 trans-04">
                                         Price: High to Low
                                     </a>
                                 </li>
@@ -249,32 +239,32 @@
                             </div>
                             <ul>
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04 filter-link-active">
+                                    <a href="{% url 'products' %}" class="filter-link stext-106 trans-04 filter-link-active">
                                         All
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'price_products' price_range='0_50' %}" class="filter-link stext-106 trans-04">
                                         $0.00 - $50.00
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'price_products' price_range='50_100' %}" class="filter-link stext-106 trans-04">
                                         $50.00 - $100.00
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'price_products' price_range='100_150' %}" class="filter-link stext-106 trans-04">
                                         $100.00 - $150.00
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'price_products' price_range='150_200' %}" class="filter-link stext-106 trans-04">
                                         $150.00 - $200.00
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'price_products' price_range='200' %}" class="filter-link stext-106 trans-04">
                                         $200.00+
                                     </a>
                                 </li>
