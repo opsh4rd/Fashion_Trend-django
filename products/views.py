@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render
 from products.models import Product, ProductCategory
 from django.shortcuts import get_object_or_404
@@ -34,14 +35,16 @@ def products(request, category_id=None):
 
 # Отображение категорий на странице с продуктами
 def category_products_view(request, category_id):
-    # Получаем объект категории по переданному идентификатору
     category = ProductCategory.objects.get(id=category_id)
-    # Получаем все продукты, принадлежащие данной категории
     products = Product.objects.filter(category=category)
-    # Получаем все категории для отображения ссылок
     categories = ProductCategory.objects.all()
-    # Передаем объекты категории и товаров в контекст шаблона
-    context = {'category': category, 'products': products, 'categories': categories}
+    context = {
+        'category': category,
+        'products': products,
+        'categories': categories,
+        'title': 'Products',
+        'baskets': Baskets.objects.filter(user=request.user),
+    }
     return render(request, 'products/products.html', context)
 
 
@@ -95,14 +98,66 @@ def contacts(request):
 # Поиск товаров
 def search_results(request):
     query = request.GET.get('q')
-    object_list = Product.objects.filter(name__icontains=query)
+    products = Product.objects.filter(name__icontains=query)
     context = {
         'query': query,
-        'object_list': object_list,
+        'products': products,
+        'title': 'Products',
+        'baskets': Baskets.objects.filter(user=request.user),
+        'categories': ProductCategory.objects.all(),
     }
-    if len(object_list) == 0:
+    if len(products) == 0:
         context['no_results'] = True
 
-    return render(request, 'products/search.html', context)
+    return render(request, 'products/products.html', context)
 
 
+# Сортировка по цене
+def price_products(request, price_range):
+    price_filters = {
+        '0_50': {'price__lte': 50},
+        '50_100': {'price__gt': 50, 'price__lte': 100},
+        '100_150': {'price__gt': 100, 'price__lte': 150},
+        '150_200': {'price__gt': 150, 'price__lte': 200},
+        '200': {'price__gt': 200}
+    }
+
+    products = Product.objects.filter(**price_filters.get(price_range, {}))
+
+    context = {
+        'products': products,
+        'title': 'Products',
+        'baskets': Baskets.objects.filter(user=request.user),
+        'categories': ProductCategory.objects.all(),
+
+    }
+
+    return render(request, 'products/products.html', context)
+
+
+# Сортировка по возрастанию
+def sort_by_low_to_high(request):
+    products = Product.objects.order_by('price')
+    context = {
+        'products': products,
+        'title': 'Products',
+        'baskets': Baskets.objects.filter(user=request.user),
+        'categories': ProductCategory.objects.all(),
+
+    }
+
+    return render(request, 'products/products.html', context)
+
+
+# Сортировка по убыванию
+def sort_by_high_to_low(request):
+    products = Product.objects.order_by('-price')
+    context = {
+        'products': products,
+        'title': 'Products',
+        'baskets': Baskets.objects.filter(user=request.user),
+        'categories': ProductCategory.objects.all(),
+
+    }
+
+    return render(request, 'products/products.html', context)
