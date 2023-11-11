@@ -21,22 +21,13 @@ class Product(models.Model):  # Продукты
         ('Size XL', 'XL'),
     )
 
-    CHOICES_COLOR = (
-        ('red', 'Red'),
-        ('blue', 'Blue'),
-        ('white', 'White'),
-        ('grey', 'Grey'),
-
-
-    )
-
     name = models.CharField(max_length=128)
     description = models.TextField()
     size = models.CharField(max_length=50, choices=CHOICES_SIZE)
-    color = models.CharField(max_length=50, choices=CHOICES_COLOR)
     quantity = models.PositiveIntegerField(default=0)
     price = models.DecimalField(max_digits=20, decimal_places=2)
     image = models.ImageField(upload_to='products_image')
+    date = models.DateField(auto_now_add=True)
     category = models.ForeignKey(to=ProductCategory, on_delete=models.CASCADE)
 
     class Meta:  # Отображение в админ панели
