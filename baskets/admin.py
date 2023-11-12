@@ -1,3 +1,8 @@
 from django.contrib import admin
+from baskets.models import Baskets
 
-# Register your models here.
+
+class BasketsAdmin(admin.TabularInline):
+    model = Baskets
+    fields = ('product', 'quantity')
+    extra = 0
