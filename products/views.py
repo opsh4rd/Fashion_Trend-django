@@ -3,6 +3,7 @@ from django.shortcuts import render
 from products.models import Product, ProductCategory
 from django.shortcuts import get_object_or_404
 from baskets.models import Baskets
+from datetime import date
 
 
 def index(request):
@@ -160,4 +161,17 @@ def sort_by_high_to_low(request):
 
     }
 
+    return render(request, 'products/products.html', context)
+
+
+def product_category_index_year(request, category_id):
+    products = Product.objects.filter(Q(category=category_id) & Q(date__gte=date(2023, 11, 10)))
+    categories = ProductCategory.objects.all()
+    context = {
+        'products': products,
+        'title': 'Products',
+        'baskets': Baskets.objects.filter(user=request.user),
+        'categories': categories
+
+    }
     return render(request, 'products/products.html', context)
