@@ -1,9 +1,15 @@
 from django.db.models import Q
 from django.shortcuts import render
+from django.template.loader import get_template
+from django.core.mail import EmailMultiAlternatives
+
+
 from products.models import Product, ProductCategory
 from django.shortcuts import get_object_or_404
 from baskets.models import Baskets
 from datetime import date
+from products.forms import SendMessage
+
 
 
 def index(request):
@@ -88,12 +94,35 @@ def about(request):
 
 # Отображение контактов
 def contacts(request):
+    if request.method == 'POST':
+        form = SendMessage(request.POST)
+        if form.is_valid():
+            send_message(form.cleaned_data['email'], form.cleaned_data['text'])
+
+    else:
+        form = SendMessage()
+
     context = {
         'title': 'Contact',
         'baskets': Baskets.objects.filter(user=request.user),
         'categories': ProductCategory.objects.all(),
+        'form': form,
     }
     return render(request, 'products/contacts.html', context)
+
+
+def send_message(email, text_message):
+    text = get_template('products/messages.html')
+    html = get_template('products/messages.html')
+    context = {'text_message': text_message, 'email': email}
+    subject = 'Сообщение от пользователя'
+    from_email = 'from@example.com'
+    text_content = text.render(context)
+    html_content = html.render(context)
+
+    msg = EmailMultiAlternatives(subject, text_content, from_email, ['manager@example.com'])
+    msg.attach_alternative(html_content, 'text/html')
+    msg.send()
 
 
 # Поиск товаров
