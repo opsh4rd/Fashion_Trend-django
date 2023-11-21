@@ -1,6 +1,7 @@
 from django.db import models
-from users.models import User
+
 from products.models import Product
+from users.models import User
 
 
 class BasketQuerySet(models.QuerySet):
@@ -25,3 +26,14 @@ class Baskets(models.Model):
     def sum(self):
         return self.product.price * self.quantity
 
+
+class Customer(models.Model):
+    country = models.CharField(max_length=120)
+    state = models.CharField(max_length=120)
+    street = models.CharField(max_length=120)
+    phone = models.CharField(max_length=50)
+    baskets = models.ManyToManyField(Baskets, related_name='customers')
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"заказ № {self.id}"
