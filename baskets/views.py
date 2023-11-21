@@ -1,11 +1,10 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, get_object_or_404
-# from django.contrib.auth.decorators import login_required
-from products.models import Product
-from baskets.models import Baskets
-from products.models import ProductCategory
+from django.shortcuts import HttpResponseRedirect, render
+
+from baskets.models import Baskets, Customer
+from products.models import Product, ProductCategory
 
 
-# Отображение корзины товаров
+# Корзина товаров
 def baskets(request):
     if request.user.is_authenticated:
         baskets = Baskets.objects.filter(user=request.user)
@@ -21,7 +20,7 @@ def baskets(request):
     return render(request, 'baskets/baskets.html', context)
 
 
-# Добавление и прибавление товара
+# Добавления корзины
 def basket_add(request, product_id):
     product = Product.objects.get(id=product_id)
     baskets = Baskets.objects.filter(user=request.user, product=product)
@@ -36,7 +35,7 @@ def basket_add(request, product_id):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
-# Убавление товара
+# Убавления корзины
 def basket_negative(request, product_id):
     product = Product.objects.get(id=product_id)
     baskets = Baskets.objects.filter(user=request.user, product=product)
@@ -52,7 +51,7 @@ def basket_negative(request, product_id):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
-# Удаление в целом товара
+# Удаления в целом
 def basket_remove(request, basket_id):
     basket = Baskets.objects.get(id=basket_id)
     baskets = Baskets.objects.filter(user=request.user)
@@ -63,3 +62,29 @@ def basket_remove(request, basket_id):
     }
 
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+
+# Заказ товаров
+def order(request):
+    if request.method == 'POST':
+        country = request.POST.get('country')
+        state = request.POST.get('state')
+        street = request.POST.get('street')
+        phone = request.POST.get('phone')
+        print(request.POST)
+
+        customer = Customer.objects.create(
+            country=country,
+            state=state,
+            street=street,
+            phone=phone
+        )
+
+        baskets = Baskets.objects.filter(user=request.user)
+
+        customer.baskets.set(baskets)
+
+        return HttpResponseRedirect(
+            '/')
+
+    return render(request, 'baskets/baskets.html')

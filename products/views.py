@@ -1,17 +1,20 @@
+from datetime import date
+
+from django.core.mail import EmailMultiAlternatives
+from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.template.loader import get_template
-from django.core.mail import EmailMultiAlternatives
 
-
-from products.models import Product, ProductCategory
-from django.shortcuts import get_object_or_404
 from baskets.models import Baskets
-from datetime import date
 from products.forms import SendMessage
+from products.models import Newsletter
+from products.models import Product, ProductCategory
 
 
-
+# Главная
 def index(request):
     if request.user.is_authenticated:
         baskets = Baskets.objects.filter(user=request.user)
@@ -28,71 +31,101 @@ def index(request):
     return render(request, 'products/index.html', context)
 
 
-# Отображение страницы с продуктами
-def products(request, category_id=None):
+# Страницы с продуктами
+def products(request, page_number=1):
+    products = Product.objects.all()
+
+    per_page = 8
+    paginator = Paginator(products, per_page)
+    products_paginator = paginator.page(page_number)
+
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
+
     context = {
         'title': 'Products',
         'categories': ProductCategory.objects.all(),
-        'products': Product.objects.all(),
-        'baskets': Baskets.objects.filter(user=request.user),
+        'products': products_paginator,
+        'baskets': baskets,
 
     }
     return render(request, 'products/products.html', context)
 
 
-# Отображение категорий на странице с продуктами
+# Категории на странице с продуктами
 def category_products_view(request, category_id):
     category = ProductCategory.objects.get(id=category_id)
     products = Product.objects.filter(category=category)
     categories = ProductCategory.objects.all()
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
     context = {
         'category': category,
         'products': products,
         'categories': categories,
         'title': 'Products',
-        'baskets': Baskets.objects.filter(user=request.user),
+        'baskets': baskets,
     }
     return render(request, 'products/products.html', context)
 
 
-# Отображение детализации продукции на странице 'Продукты'
+# Детализации продукции на странице 'Продукты'
 def detail_view(request, id):
     product = get_object_or_404(Product, id=id)
+    size = product.choices.all()
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
 
     context = {
+        'size': size,
         'title': 'Product Detail',
         'product': product,
         'categories': ProductCategory.objects.all(),
-        'baskets': Baskets.objects.filter(user=request.user),
+        'baskets': baskets,
     }
     return render(request, 'products/product-detail.html', context)
 
 
-# Отображение детализации продукции на странице 'Главная'
+# Детализации продукции на странице 'Главная'
 def detail_view_index(request, id):
     product = get_object_or_404(Product, id=id)
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
 
     context = {
         'title': 'Product Detail',
         'product': product,
         'categories': ProductCategory.objects.all(),
-        'baskets': Baskets.objects.filter(user=request.user),
+        'baskets': baskets,
     }
     return render(request, 'products/product-detail.html', context)
 
 
-# Отображение информации о компании
+# Информации о компании
 def about(request):
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
+
     context = {
         'title': 'About',
-        'baskets': Baskets.objects.filter(user=request.user),
+        'baskets': baskets,
         'categories': ProductCategory.objects.all(),
     }
 
     return render(request, 'products/about.html', context)
 
 
-# Отображение контактов
+# Контакты
 def contacts(request):
     if request.method == 'POST':
         form = SendMessage(request.POST)
@@ -102,15 +135,21 @@ def contacts(request):
     else:
         form = SendMessage()
 
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
+
     context = {
         'title': 'Contact',
-        'baskets': Baskets.objects.filter(user=request.user),
+        'baskets': baskets,
         'categories': ProductCategory.objects.all(),
         'form': form,
     }
     return render(request, 'products/contacts.html', context)
 
 
+# Обратная связь в 'контактах'
 def send_message(email, text_message):
     text = get_template('products/messages.html')
     html = get_template('products/messages.html')
@@ -129,11 +168,17 @@ def send_message(email, text_message):
 def search_results(request):
     query = request.GET.get('q')
     products = Product.objects.filter(name__icontains=query)
+
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
+
     context = {
         'query': query,
         'products': products,
         'title': 'Products',
-        'baskets': Baskets.objects.filter(user=request.user),
+        'baskets': baskets,
         'categories': ProductCategory.objects.all(),
     }
     if len(products) == 0:
@@ -154,10 +199,15 @@ def price_products(request, price_range):
 
     products = Product.objects.filter(**price_filters.get(price_range, {}))
 
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
+
     context = {
         'products': products,
         'title': 'Products',
-        'baskets': Baskets.objects.filter(user=request.user),
+        'baskets': baskets,
         'categories': ProductCategory.objects.all(),
 
     }
@@ -168,10 +218,16 @@ def price_products(request, price_range):
 # Сортировка по возрастанию
 def sort_by_low_to_high(request):
     products = Product.objects.order_by('price')
+
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
+
     context = {
         'products': products,
         'title': 'Products',
-        'baskets': Baskets.objects.filter(user=request.user),
+        'baskets': baskets,
         'categories': ProductCategory.objects.all(),
 
     }
@@ -182,10 +238,15 @@ def sort_by_low_to_high(request):
 # Сортировка по убыванию
 def sort_by_high_to_low(request):
     products = Product.objects.order_by('-price')
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
+
     context = {
         'products': products,
         'title': 'Products',
-        'baskets': Baskets.objects.filter(user=request.user),
+        'baskets': baskets,
         'categories': ProductCategory.objects.all(),
 
     }
@@ -193,14 +254,31 @@ def sort_by_high_to_low(request):
     return render(request, 'products/products.html', context)
 
 
+# Имитация сортировка по последним добавленным элементам с index (по сезону)
 def product_category_index_year(request, category_id):
     products = Product.objects.filter(Q(category=category_id) & Q(date__gte=date(2023, 11, 10)))
     categories = ProductCategory.objects.all()
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
+
     context = {
         'products': products,
         'title': 'Products',
-        'baskets': Baskets.objects.filter(user=request.user),
+        'baskets': baskets,
         'categories': categories
 
     }
     return render(request, 'products/products.html', context)
+
+
+# Подписка на новости
+def newsletter(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')  # Получаем данные из HTML-формы напрямую
+        if email:  # Проверяем, что email не пустой
+            Newsletter.objects.create(email=email)  # Создаем новый объект модели на основе полученных данных
+            return HttpResponseRedirect(
+                '/')  # Перенаправляем пользователя на главную страницу после успешной отправки данных
+    return render(request, 'products/base.html')

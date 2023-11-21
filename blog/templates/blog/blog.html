@@ -53,12 +53,11 @@
                         {% endfor %}
                         <!-- Pagination -->
                         <div class="flex-l-m flex-w w-full p-t-10 m-lr--7">
-                            <a href="#" class="flex-c-m how-pagination1 trans-04 m-all-7 active-pagination1">
-                                1
-                            </a>
-                            <a href="#" class="flex-c-m how-pagination1 trans-04 m-all-7">
-                                2
-                            </a>
+                            {% for page in blogs.paginator.page_range %}
+                                <a href="{% url 'paginator' page %}" class="flex-c-m how-pagination1 trans-04 m-all-7 {% if page == blogs.number %} active-pagination1 {% endif %}">
+                                    {{ page }}
+                                </a>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect, HttpResponseRedirect, reverse
-from django.contrib.auth import authenticate
-from users.forms import UserRegistrationForm, UserLoginForm
 from django.contrib import auth
-from django.contrib.auth import logout
+from django.shortcuts import render, redirect, HttpResponseRedirect, reverse
+
+from users.forms import UserRegistrationForm, UserLoginForm
 
 
+# Логин
 def login(request):
     if request.method == 'POST':
         form = UserLoginForm(data=request.POST)
@@ -20,6 +20,7 @@ def login(request):
     return render(request, 'users/login.html', {'form': form})
 
 
+# Регистрация
 def registration(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -32,6 +33,7 @@ def registration(request):
     return render(request, 'users/registration.html', {'form': form, 'title': 'Registration'})
 
 
+# Выход
 def logout_view(request):
     auth.logout(request)
     return HttpResponseRedirect(reverse('index'))

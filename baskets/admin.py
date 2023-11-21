@@ -1,5 +1,8 @@
 from django.contrib import admin
-from baskets.models import Baskets
+
+from baskets.models import Baskets, Customer
+
+admin.site.register(Customer)
 
 
 class BasketsAdmin(admin.TabularInline):

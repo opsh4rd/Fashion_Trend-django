@@ -71,26 +71,28 @@
                 <!-- Menu desktop -->
                 <div class="menu-desktop">
                     <ul class="main-menu">
-                        <li>
+                        <li {% if request.path == '/' %}class="active-menu"{% endif %}>
                             <a href="{% url 'index' %}">Home</a>
                         </li>
-                        <li>
+                        <li {% if request.path == '/products/' %}class="active-menu"{% endif %}>
                             <a href="{% url 'products' %}">Shop</a>
                         </li>
-                        <li class="label1" data-label1="hot">
+                        <li {% if request.path == '/basket/' %}class="active-menu"{% endif %} class="label1"
+                            data-label1="hot">
                             <a href="{% url 'basket' %}">Features</a>
                         </li>
-                        <li>
+                        <li {% if request.path == '/blogs/' %}class="active-menu"{% endif %}>
                             <a href="{% url 'blogs' %}">Blog</a>
                         </li>
-                        <li>
+                        <li {% if request.path == '/about/' %}class="active-menu"{% endif %}>
                             <a href="{% url 'about' %}">About</a>
                         </li>
-                        <li>
+                        <li {% if request.path == '/contact/' %}class="active-menu"{% endif %}>
                             <a href="{% url 'contact' %}">Contact</a>
                         </li>
                     </ul>
                 </div>
+
                 <!-- Icon header -->
                 <div class="wrap-icon-header flex-w flex-r-m">
                     <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
@@ -176,7 +178,6 @@
 {% block Product %} {% endblock %}
 {% block Title_page %} {% endblock %}
 {% block Content_page %} {% endblock %}
-{% block Map %} {% endblock %}
 <!-- Footer -->
 <footer class="bg3 p-t-75 p-b-32">
     <div class="container">
@@ -241,18 +242,17 @@
                 <h4 class="stext-301 cl0 p-b-30">
                     Newsletter
                 </h4>
-                <form>
-                    <div class="wrap-input1 w-full p-b-4">
-                        <input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email"
-                               placeholder="email@example.com">
-                        <div class="focus-input1 trans-04"></div>
+                <form method="POST" action="{% url 'newsletter' %}"
+                      class="signup-form form-inline justify-content-center pt-3">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="sr-only" for="semail">Enter your email</label>
+                        <input type="email" id="semail" name="email" class="form-control mr-md-1 semail"
+                               placeholder="Enter email">
                     </div>
-                    <div class="p-t-18">
-                        <button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
-                            Subscribe
-                        </button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
                 </form>
+
             </div>
         </div>
         <div class="p-t-40">

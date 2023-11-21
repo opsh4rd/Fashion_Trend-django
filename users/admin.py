@@ -7,4 +7,3 @@ from baskets.admin import BasketsAdmin
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('username',)
     inlines = (BasketsAdmin,)
-

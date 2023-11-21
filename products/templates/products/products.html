@@ -1,10 +1,13 @@
 {% extends 'products/base.html' %}
-{% load static %}
 
 {% block Product %}
+
     <div class="bg0 m-t-23 p-b-140">
+
         <div class="container">
+
             <div class="flex-w flex-sb-m p-b-52">
+
                 <div class="flex-w flex-l-m filter-tope-group m-tb-10">
                     {% for category in categories %}
                         {% if category.name == 'All Products' %}
@@ -80,32 +83,38 @@
                             </div>
                             <ul>
                                 <li class="p-b-6">
-                                    <a href="{% url 'products' %}" class="filter-link stext-106 trans-04 filter-link-active">
+                                    <a href="{% url 'products' %}"
+                                       class="filter-link stext-106 trans-04 filter-link-active">
                                         All
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="{% url 'price_products' price_range='0_50' %}" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'price_products' price_range='0_50' %}"
+                                       class="filter-link stext-106 trans-04">
                                         $0.00 - $50.00
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="{% url 'price_products' price_range='50_100' %}" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'price_products' price_range='50_100' %}"
+                                       class="filter-link stext-106 trans-04">
                                         $50.00 - $100.00
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="{% url 'price_products' price_range='100_150' %}" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'price_products' price_range='100_150' %}"
+                                       class="filter-link stext-106 trans-04">
                                         $100.00 - $150.00
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="{% url 'price_products' price_range='150_200' %}" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'price_products' price_range='150_200' %}"
+                                       class="filter-link stext-106 trans-04">
                                         $150.00 - $200.00
                                     </a>
                                 </li>
                                 <li class="p-b-6">
-                                    <a href="{% url 'price_products' price_range='200' %}" class="filter-link stext-106 trans-04">
+                                    <a href="{% url 'price_products' price_range='200' %}"
+                                       class="filter-link stext-106 trans-04">
                                         $200.00+
                                     </a>
                                 </li>
@@ -141,11 +150,15 @@
                     </div>
                 {% endfor %}
             </div>
-            <!-- Load more -->
-            <div class="flex-c-m flex-w w-full p-t-45">
-                <a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-                    Load More
-                </a>
+            <!-- Pagination -->
+
+            <div class="flex-l-m flex-w w-full p-t-10 m-lr--7">
+                {% for page in products.paginator.page_range %}
+                    <a href="{% url 'paginator_products' page %}"
+                       class="flex-c-m how-pagination1 trans-04 m-all-7 {% if page == products.number %} active-pagination1 {% endif %}">
+                        {{ page }}
+                    </a>
+                {% endfor %}
             </div>
         </div>
     </div>

@@ -1,36 +1,56 @@
-from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, render
+
 from baskets.models import Baskets
 from blog.models import Blog, BlogCategories
-from django.shortcuts import get_object_or_404
 from products.models import ProductCategory
 
 
-def blog(request):
+# Блог
+def blog(request, page_number=1):
+    blogs = Blog.objects.all()
+
+    per_page = 2
+    paginator = Paginator(blogs, per_page)
+    blogs_paginator = paginator.page(page_number)
+
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
+
     context = {
         'title': 'Blog',
-        'blogs': Blog.objects.all(),
-        'baskets': Baskets.objects.filter(user=request.user),
+        'blogs': blogs_paginator,
+        'baskets': baskets,
         'categories_blog': BlogCategories.objects.all(),
-        'categories': ProductCategory.objects.all(),  # Отображение категории в футере
+        'categories': ProductCategory.objects.all(),
     }
 
     return render(request, 'blog/blog.html', context)
 
 
+# Детализация блога
 def blog_detail(request, id):
     blog = get_object_or_404(Blog, id=id)
+
+    if request.user.is_authenticated:
+        baskets = Baskets.objects.filter(user=request.user)
+    else:
+        baskets = []
 
     context = {
         'title': 'Blog',
         'blog': blog,
-        'baskets': Baskets.objects.filter(user=request.user),
+        'baskets': baskets,
         'categories_blog': BlogCategories.objects.all(),
-        'categories': ProductCategory.objects.all(),  # Отображение категории в футере
+        'categories': ProductCategory.objects.all(),
     }
 
     return render(request, 'blog/blog-detail.html', context)
 
 
+# Категории блога
 def category_blog(request, category_id):
     category = BlogCategories.objects.get(id=category_id)
     blogs = Blog.objects.filter(category=category)
@@ -40,11 +60,11 @@ def category_blog(request, category_id):
         'blogs': blogs,
         'categories_blog': categories,
         'categories': ProductCategory.objects.all(),
-    }  # Отображение категории в футере}
+    }
     return render(request, 'blog/blog.html', context)
 
 
-# Поиск блогов
+# Поиск блога
 def search_blogs(request):
     query = request.GET.get('q')
     blogs = Blog.objects.filter(name__icontains=query)
@@ -52,7 +72,7 @@ def search_blogs(request):
         'query': query,
         'blogs': blogs,
         'categories_blog': BlogCategories.objects.all(),
-        'categories': ProductCategory.objects.all(),  # Отображение категории в футере
+        'categories': ProductCategory.objects.all(),
     }
     if len(blogs) == 0:
         context['no_results'] = True
