@@ -6,11 +6,6 @@ admin.site.register(ProductCategory)
 
 admin.site.register(Choices)
 admin.site.register(Newsletter)
+admin.site.register(Product)
 
 
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'quantity', 'category')
-    fields = ('name', 'description', 'quantity', 'price', 'image', 'category')
-    search_fields = ('name',)
-    ordering = ('name',)

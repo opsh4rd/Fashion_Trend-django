@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.template.loader import get_template
+from django.conf import settings
 
 from baskets.models import Baskets
 from products.forms import SendMessage
@@ -155,7 +156,7 @@ def send_message(email, text_message):
     html = get_template('products/messages.html')
     context = {'text_message': text_message, 'email': email}
     subject = 'Сообщение от пользователя'
-    from_email = 'from@example.com'
+    from_email = settings.EMAIL_HOST_USER
     text_content = text.render(context)
     html_content = html.render(context)
 
